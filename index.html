@@ -1,0 +1,1891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PorchPass Data Room & Analytics Infrastructure | Board Presentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #111827;
+            --bg-tertiary: #1e293b;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --accent-gold: #fbbf24;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 10% 20%, rgba(59,130,246,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 80%, rgba(139,92,246,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(16,185,129,0.05) 0%, transparent 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 28px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(139,92,246,0.1) 100%);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 20px rgba(59,130,246,0.4);
+        }
+
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-subtitle {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+
+        .nav-section {
+            padding: 24px 16px;
+            flex: 1;
+        }
+
+        .nav-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            padding: 0 12px;
+            margin-bottom: 16px;
+            margin-top: 24px;
+        }
+
+        .nav-label:first-child {
+            margin-top: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            margin: 6px 0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(59,130,246,0.1);
+            color: var(--text-primary);
+            border-color: rgba(59,130,246,0.3);
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(59,130,246,0.2) 0%, rgba(139,92,246,0.2) 100%);
+            color: var(--text-primary);
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 25px rgba(59,130,246,0.25);
+        }
+
+        .nav-item.highlight {
+            background: linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(6,182,212,0.15) 100%);
+            border-color: rgba(16,185,129,0.3);
+        }
+
+        .nav-item.highlight.active {
+            background: linear-gradient(135deg, rgba(16,185,129,0.25) 0%, rgba(6,182,212,0.25) 100%);
+            border-color: var(--accent-emerald);
+            box-shadow: 0 0 25px rgba(16,185,129,0.3);
+        }
+
+        .nav-item.cta {
+            background: linear-gradient(135deg, rgba(251,191,36,0.15) 0%, rgba(244,63,94,0.15) 100%);
+            border-color: rgba(251,191,36,0.3);
+        }
+
+        .nav-item.cta.active {
+            background: linear-gradient(135deg, rgba(251,191,36,0.25) 0%, rgba(244,63,94,0.25) 100%);
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 25px rgba(251,191,36,0.3);
+        }
+
+        .nav-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .nav-number {
+            font-size: 0.6rem;
+            background: rgba(255,255,255,0.1);
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-left: auto;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .sidebar-footer {
+            padding: 20px 24px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
+            background: rgba(0,0,0,0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 300px;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeInUp 0.5s ease;
+            padding: 40px;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59,130,246,0.4); }
+            50% { box-shadow: 0 0 40px rgba(59,130,246,0.6); }
+        }
+
+        /* Cards & Containers */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(59,130,246,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(139,92,246,0.1) 100%);
+            border: 1px solid rgba(59,130,246,0.3);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-cyan));
+        }
+
+        /* Metric Cards */
+        .metric-card {
+            background: linear-gradient(135deg, rgba(30,41,59,0.8) 0%, rgba(15,23,42,0.8) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .metric-card.blue { border-top: 3px solid var(--accent-blue); }
+        .metric-card.purple { border-top: 3px solid var(--accent-purple); }
+        .metric-card.cyan { border-top: 3px solid var(--accent-cyan); }
+        .metric-card.emerald { border-top: 3px solid var(--accent-emerald); }
+        .metric-card.amber { border-top: 3px solid var(--accent-amber); }
+        .metric-card.rose { border-top: 3px solid var(--accent-rose); }
+        .metric-card.gold { border-top: 3px solid var(--accent-gold); }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            animation: countUp 0.8s ease-out;
+        }
+
+        .metric-value.blue { color: var(--accent-blue); }
+        .metric-value.purple { color: var(--accent-purple); }
+        .metric-value.cyan { color: var(--accent-cyan); }
+        .metric-value.emerald { color: var(--accent-emerald); }
+        .metric-value.amber { color: var(--accent-amber); }
+        .metric-value.rose { color: var(--accent-rose); }
+        .metric-value.gold { color: var(--accent-gold); }
+
+        /* Impact Blocks */
+        .impact-block {
+            background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(6,182,212,0.1) 100%);
+            border: 1px solid rgba(16,185,129,0.3);
+            border-radius: 16px;
+            padding: 32px;
+            position: relative;
+        }
+
+        .impact-block::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, var(--accent-emerald), var(--accent-cyan));
+            border-radius: 2px;
+        }
+
+        /* Comparison Table */
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr 2fr;
+            gap: 16px;
+            padding: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: background 0.2s ease;
+        }
+
+        .comparison-row:hover {
+            background: rgba(59,130,246,0.05);
+        }
+
+        .before-cell {
+            background: rgba(244,63,94,0.1);
+            border: 1px solid rgba(244,63,94,0.2);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--accent-rose);
+        }
+
+        .after-cell {
+            background: rgba(16,185,129,0.1);
+            border: 1px solid rgba(16,185,129,0.2);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--accent-emerald);
+        }
+
+        /* Win Cards */
+        .win-card {
+            background: linear-gradient(135deg, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.9) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 28px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .win-card:hover {
+            transform: scale(1.02);
+            border-color: rgba(59,130,246,0.4);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        .win-number {
+            position: absolute;
+            top: -12px;
+            left: 24px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+            font-weight: 800;
+            font-size: 0.9rem;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            box-shadow: 0 4px 15px rgba(59,130,246,0.4);
+        }
+
+        /* Progress Bars */
+        .progress-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            height: 12px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 8px;
+            transition: width 1.5s ease-out;
+        }
+
+        .progress-bar.blue { background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); }
+        .progress-bar.purple { background: linear-gradient(90deg, var(--accent-purple), var(--accent-rose)); }
+        .progress-bar.emerald { background: linear-gradient(90deg, var(--accent-emerald), var(--accent-cyan)); }
+
+        /* Timeline */
+        .timeline-item {
+            position: relative;
+            padding-left: 40px;
+            padding-bottom: 32px;
+            border-left: 2px solid rgba(59,130,246,0.3);
+        }
+
+        .timeline-item:last-child {
+            border-left: 2px solid transparent;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -9px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            border: 3px solid var(--bg-primary);
+            box-shadow: 0 0 15px rgba(59,130,246,0.5);
+        }
+
+        /* Sheet Visualization */
+        .sheet-card {
+            background: rgba(30,41,59,0.6);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .sheet-card:hover {
+            background: rgba(59,130,246,0.1);
+            border-color: rgba(59,130,246,0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Quote Block */
+        .quote-block {
+            background: linear-gradient(135deg, rgba(251,191,36,0.1) 0%, rgba(244,63,94,0.05) 100%);
+            border: 1px solid rgba(251,191,36,0.3);
+            border-radius: 16px;
+            padding: 40px;
+            position: relative;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            font-style: italic;
+            text-align: center;
+        }
+
+        .quote-block::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 5rem;
+            color: rgba(251,191,36,0.3);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        /* Stat Highlights */
+        .stat-highlight {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(59,130,246,0.15);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, rgba(251,191,36,0.15) 0%, rgba(244,63,94,0.1) 100%);
+            border: 2px solid rgba(251,191,36,0.4);
+            border-radius: 20px;
+            padding: 48px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(251,191,36,0.1) 0%, transparent 50%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-amber));
+            color: #000;
+            font-weight: 700;
+            padding: 16px 48px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(251,191,36,0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(251,191,36,0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .sidebar { width: 260px; }
+            .main-content { margin-left: 260px; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: rgba(59,130,246,0.15);
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(59,130,246,0.3);
+        }
+
+        .data-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .data-table tr:hover td {
+            background: rgba(59,130,246,0.05);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge.success { background: rgba(16,185,129,0.2); color: var(--accent-emerald); }
+        .badge.info { background: rgba(59,130,246,0.2); color: var(--accent-blue); }
+        .badge.warning { background: rgba(251,191,36,0.2); color: var(--accent-amber); }
+        .badge.critical { background: rgba(244,63,94,0.2); color: var(--accent-rose); }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-icon">📊</div>
+                <div>
+                    <div class="logo-text">PorchPass</div>
+                    <div class="logo-subtitle">Data Room & Analytics</div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="nav-section">
+            <div class="nav-label">Executive Overview</div>
+            <div class="nav-item active" onclick="showSection('hero')">
+                <span class="nav-icon">🎯</span>
+                <span>The Headline</span>
+            </div>
+            <div class="nav-item" onclick="showSection('metrics')">
+                <span class="nav-icon">📈</span>
+                <span>Key Metrics</span>
+                <span class="nav-number">7</span>
+            </div>
+            <div class="nav-item highlight" onclick="showSection('wins')">
+                <span class="nav-icon">🏆</span>
+                <span>Top 10 Wins</span>
+                <span class="nav-number">10</span>
+            </div>
+
+            <div class="nav-label">System Deep Dive</div>
+            <div class="nav-item" onclick="showSection('architecture')">
+                <span class="nav-icon">🏗️</span>
+                <span>System Architecture</span>
+            </div>
+            <div class="nav-item" onclick="showSection('sheets')">
+                <span class="nav-icon">📑</span>
+                <span>14 Engine Components</span>
+                <span class="nav-number">14</span>
+            </div>
+            <div class="nav-item" onclick="showSection('comparison')">
+                <span class="nav-icon">⚡</span>
+                <span>Before vs. After</span>
+            </div>
+
+            <div class="nav-label">Business Impact</div>
+            <div class="nav-item" onclick="showSection('value')">
+                <span class="nav-icon">💰</span>
+                <span>Value Generated</span>
+            </div>
+            <div class="nav-item" onclick="showSection('risk')">
+                <span class="nav-icon">🛡️</span>
+                <span>Risk & Compliance</span>
+            </div>
+            <div class="nav-item" onclick="showSection('scalability')">
+                <span class="nav-icon">🚀</span>
+                <span>Scalability</span>
+            </div>
+
+            <div class="nav-label">Strategic Vision</div>
+            <div class="nav-item cta" onclick="showSection('roadmap')">
+                <span class="nav-icon">🗺️</span>
+                <span>Q1 2026 Roadmap</span>
+            </div>
+            <div class="nav-item cta" onclick="showSection('recommendation')">
+                <span class="nav-icon">✅</span>
+                <span>Board Recommendation</span>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div style="margin-bottom: 8px;">Board Presentation</div>
+            <div style="color: var(--accent-blue);">December 2025</div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Section: Hero -->
+        <section id="section-hero" class="content-section active">
+            <div class="hero-card mb-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="badge success">MISSION ACCOMPLISHED</span>
+                    <span class="badge info">72 HOURS</span>
+                </div>
+                <h1 class="text-5xl font-extrabold mb-6 leading-tight" style="background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    We Delivered What Engineering Couldn't—<br>In 72 Hours
+                </h1>
+                <p class="text-xl text-gray-300 mb-8 max-w-4xl leading-relaxed">
+                    The previous engineering team spent <strong>months</strong> attempting to build a single month of Data Room Tape. 
+                    <span style="color: var(--accent-rose);">They failed.</span><br><br>
+                    We built <strong>all 12 months</strong> (December 2024 – November 2025), fully validated, audit-ready, 
+                    and delivered in <strong>under 72 hours</strong>. Monthly additions now require <strong>&lt;5 minutes</strong>.
+                </p>
+                <div class="grid grid-cols-4 gap-6">
+                    <div class="metric-card blue">
+                        <div class="metric-value blue">2.33M</div>
+                        <div class="text-sm text-gray-400 mt-2">Data Points Generated</div>
+                        <div class="text-xs text-gray-500 mt-1">10+ traditional databases worth</div>
+                    </div>
+                    <div class="metric-card purple">
+                        <div class="metric-value purple">877K</div>
+                        <div class="text-sm text-gray-400 mt-2">Automated Formulas</div>
+                        <div class="text-xs text-gray-500 mt-1">Zero manual calculation risk</div>
+                    </div>
+                    <div class="metric-card emerald">
+                        <div class="metric-value emerald">&lt;72h</div>
+                        <div class="text-sm text-gray-400 mt-2">Build Time</div>
+                        <div class="text-xs text-gray-500 mt-1">vs. months of failed attempts</div>
+                    </div>
+                    <div class="metric-card gold">
+                        <div class="metric-value gold">$210K+</div>
+                        <div class="text-sm text-gray-400 mt-2">Annual Cost Avoidance</div>
+                        <div class="text-xs text-gray-500 mt-1">Engineering labor savings</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quote-block mb-8">
+                For the first time in PorchPass history, we have <strong>complete, auditable visibility</strong> into our loan portfolio spanning 12 months. 
+                We understand our delinquency trends, cash flow patterns, servicer performance, and risk signals <strong>in real time</strong>.
+                The system that was supposed to take months and failed instead took 72 hours and <strong>works flawlessly</strong>.
+            </div>
+
+            <div class="glass-card">
+                <h3 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                    <span>🎯</span> What This Means for the Board
+                </h3>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="impact-block">
+                        <h4 class="font-bold text-lg mb-3" style="color: var(--accent-emerald);">Strategic Visibility</h4>
+                        <p class="text-gray-300">Leadership can now see real-time portfolio status, delinquency trends, cash flow forecasting, and risk signals—capabilities that simply didn't exist before.</p>
+                    </div>
+                    <div class="impact-block">
+                        <h4 class="font-bold text-lg mb-3" style="color: var(--accent-emerald);">Operational Excellence</h4>
+                        <p class="text-gray-300">What used to be a multi-day manual process is now automated with complete audit trails. Regulatory reporting went from risky to reliable.</p>
+                    </div>
+                    <div class="impact-block">
+                        <h4 class="font-bold text-lg mb-3" style="color: var(--accent-emerald);">Scalable Foundation</h4>
+                        <p class="text-gray-300">The architecture supports growth from 400 to 10,000+ loans without process changes. This is the foundation for enterprise data infrastructure.</p>
+                    </div>
+                    <div class="impact-block">
+                        <h4 class="font-bold text-lg mb-3" style="color: var(--accent-emerald);">Engineering Vindication</h4>
+                        <p class="text-gray-300">Demonstrates that purpose-built, architecturally-sound solutions succeed where ad-hoc engineering approaches fail. Strategic Ops delivered.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Key Metrics -->
+        <section id="section-metrics" class="content-section">
+            <h2 class="text-4xl font-bold mb-8">📈 Key Metrics Dashboard</h2>
+            
+            <div class="grid grid-cols-3 gap-6 mb-8">
+                <div class="metric-card blue">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-gray-400">Total Data Points</span>
+                        <span class="badge info">NEW</span>
+                    </div>
+                    <div class="metric-value blue">2,332,620</div>
+                    <div class="text-sm text-gray-400 mt-2">Unique, calculated, validated data points</div>
+                    <div class="mt-4 progress-container">
+                        <div class="progress-bar blue" style="width: 100%;"></div>
+                    </div>
+                </div>
+                <div class="metric-card purple">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-gray-400">Automated Formulas</span>
+                        <span class="badge success">AUTOMATED</span>
+                    </div>
+                    <div class="metric-value purple">877,308</div>
+                    <div class="text-sm text-gray-400 mt-2">Zero manual calculation risk</div>
+                    <div class="mt-4 progress-container">
+                        <div class="progress-bar purple" style="width: 100%;"></div>
+                    </div>
+                </div>
+                <div class="metric-card cyan">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-gray-400">Loans Tracked</span>
+                        <span class="badge info">ACTIVE</span>
+                    </div>
+                    <div class="metric-value cyan">399</div>
+                    <div class="text-sm text-gray-400 mt-2">Complete 12-month history per loan</div>
+                    <div class="mt-4 progress-container">
+                        <div class="progress-bar blue" style="width: 85%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card mb-8">
+                <h3 class="text-2xl font-bold mb-6">Formula Distribution by Category</h3>
+                <div class="grid grid-cols-2 gap-8">
+                    <div>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-gray-300">Validation & Classification Rules</span>
+                                    <span class="stat-highlight">533,494</span>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-bar blue" style="width: 61%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-gray-300">Cross-Platform Matching</span>
+                                    <span class="stat-highlight">188,541</span>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-bar purple" style="width: 21%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-gray-300">Bucketing & Aggregation</span>
+                                    <span class="stat-highlight">129,056</span>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-bar emerald" style="width: 15%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-gray-300">Financial Calculations</span>
+                                    <span class="stat-highlight">26,217</span>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-bar blue" style="width: 3%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <canvas id="formulaChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-6">
+                <div class="metric-card emerald">
+                    <div class="text-gray-400 mb-2">Monthly Execution</div>
+                    <div class="metric-value emerald">&lt;5 min</div>
+                    <div class="text-xs text-gray-500 mt-2">Full recalculation</div>
+                </div>
+                <div class="metric-card amber">
+                    <div class="text-gray-400 mb-2">Months of History</div>
+                    <div class="metric-value amber">12</div>
+                    <div class="text-xs text-gray-500 mt-2">Dec 2024 – Nov 2025</div>
+                </div>
+                <div class="metric-card rose">
+                    <div class="text-gray-400 mb-2">Servicer Transactions</div>
+                    <div class="metric-value rose">5,532</div>
+                    <div class="text-xs text-gray-500 mt-2">Rogue + PorchPass unified</div>
+                </div>
+                <div class="metric-card blue">
+                    <div class="text-gray-400 mb-2">MAIC Auto-Cells</div>
+                    <div class="metric-value blue">383K</div>
+                    <div class="text-xs text-gray-500 mt-2">12 months × 32K cells</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Top 10 Wins -->
+        <section id="section-wins" class="content-section">
+            <h2 class="text-4xl font-bold mb-8">🏆 Top 10 Board-Level Wins</h2>
+            
+            <div class="space-y-8">
+                <!-- Win 1 -->
+                <div class="win-card">
+                    <span class="win-number">#1</span>
+                    <h3 class="text-2xl font-bold mt-4 mb-4" style="color: var(--accent-blue);">Engineering Failure → 72-Hour Success</h3>
+                    <p class="text-gray-300 text-lg mb-4">
+                        The previous engineering team (multiple software engineers) spent <strong>months</strong> attempting to build a single month of Data Room Tape. 
+                        <span style="color: var(--accent-rose);">They failed.</span>
+                    </p>
+                    <div class="grid grid-cols-2 gap-6 mt-6">
+                        <div class="before-cell">
+                            <strong>❌ BEFORE:</strong> Months of engineering, failed outcome
+                        </div>
+                        <div class="after-cell">
+                            <strong>✅ AFTER:</strong> 72 hours, 12 complete months, fully validated
+                        </div>
+                    </div>
+                    <div class="mt-4 p-4 bg-black/20 rounded-lg">
+                        <span class="text-gray-400">Impact Statement:</span>
+                        <span class="text-white ml-2">This isn't incremental improvement—this is a complete inversion of capability.</span>
+                    </div>
+                </div>
+
+                <!-- Win 2 -->
+                <div class="win-card">
+                    <span class="win-number">#2</span>
+                    <h3 class="text-2xl font-bold mt-4 mb-4" style="color: var(--accent-purple);">+2.33 Million New Data Points</h3>
+                    <p class="text-gray-300 text-lg mb-4">
+                        Portfolio intelligence that didn't exist yesterday—enough to fill <strong>10+ traditional databases</strong>.
+                    </p>
+                    <div class="grid grid-cols-4 gap-4 mt-6">
+                        <div class="text-center p-4 bg-black/20 rounded-lg">
+                            <div class="text-2xl font-bold" style="color: var(--accent-blue);">399</div>
+                            <div class="text-xs text-gray-400">Loans Tracked</div>
+                        </div>
+                        <div class="text-center p-4 bg-black/20 rounded-lg">
+                            <div class="text-2xl font-bold" style="color: var(--accent-purple);">12</div>
+                            <div class="text-xs text-gray-400">Months History</div>
+                        </div>
+                        <div class="text-center p-4 bg-black/20 rounded-lg">
+                            <div class="text-2xl font-bold" style="color: var(--accent-cyan);">2</div>
+                            <div class="text-xs text-gray-400">Servicer Platforms</div>
+                        </div>
+                        <div class="text-center p-4 bg-black/20 rounded-lg">
+                            <div class="text-2xl font-bold" style="color: var(--accent-emerald);">100%</div>
+                            <div class="text-xs text-gray-400">Visibility</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Win 3 -->
+                <div class="win-card">
+                    <span class="win-number">#3</span>
+                    <h3 class="text-2xl font-bold mt-4 mb-4" style="color: var(--accent-cyan);">877,308 Automated Formulas = Zero Manual Risk</h3>
+                    <p class="text-gray-300 text-lg mb-4">
+                        Every metric, every classification, every calculation is automated and traceable.
+                    </p>
+                    <table class="data-table mt-6">
+                        <thead>
+                            <tr>
+                                <th>Formula Category</th>
+                                <th>Count</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Validation & Classification</td>
+                                <td><span class="stat-highlight">533,494</span></td>
+                                <td>Catch data anomalies before they become problems</td>
+                            </tr>
+                            <tr>
+                                <td>Cross-Platform Matching</td>
+                                <td><span class="stat-highlight">188,541</span></td>
+                                <td>Reconcile Rogue & PorchPass automatically</td>
+                            </tr>
+                            <tr>
+                                <td>Bucketing & Aggregation</td>
+                                <td><span class="stat-highlight">129,056</span></td>
+                                <td>Delinquency tiers, aging buckets, risk categories</td>
+                            </tr>
+                            <tr>
+                                <td>Financial Calculations</td>
+                                <td><span class="stat-highlight">26,217</span></td>
+                                <td>UPB reconciliation, interest accrual, principal</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Win 4 -->
+                <div class="win-card">
+                    <span class="win-number">#4</span>
+                    <h3 class="text-2xl font-bold mt-4 mb-4" style="color: var(--accent-emerald);">MAIC Compliance Automation</h3>
+                    <p class="text-gray-300 text-lg mb-4">
+                        Complete MAIC Analytics module: <strong>962 rows × 34 columns = 31,932 auto-calculated cells × 12 months = 383,184 total</strong>
+                    </p>
+                    <div class="grid grid-cols-3 gap-4 mt-6">
+                        <div class="after-cell">
+                            ✅ Maps every loan to regulatory requirements
+                        </div>
+                        <div class="after-cell">
+                            ✅ Flags compliance exceptions before submission
+                        </div>
+                        <div class="after-cell">
+                            ✅ Generates audit-ready documentation automatically
+                        </div>
+                    </div>
+                    <div class="mt-4 text-center p-4 bg-emerald-500/10 rounded-lg border border-emerald-500/30">
+                        <span class="text-emerald-400 font-bold">Regulatory reporting: Risky manual process → Automated, auditable system</span>
+                    </div>
+                </div>
+
+                <!-- Win 5 -->
+                <div class="win-card">
+                    <span class="win-number">#5</span>
+                    <h3 class="text-2xl font-bold mt-4 mb-4" style="color: var(--accent-amber);">Real-Time Portfolio Risk Dashboard</h3>
+                    <p class="text-gray-300 text-lg mb-4">
+                        For the first time, C-Suite and Board can <strong>instantly access</strong> critical portfolio intelligence.
+                    </p>
+                    <div class="grid grid-cols-5 gap-4 mt-6">
+                        <div class="text-center p-4 bg-black/20 rounded-lg">
+                            <div class="text-lg font-bold text-amber-400">0-30 Days</div>
+                            <div class="text-xs text-gray-400">Current</div>
+                        </div>
+                        <div class="text-center p-4 bg-black/20 rounded-lg">
+                            <div class="text-lg font-bold text-yellow-400">30-60 Days</div>
+                            <div class="text-xs text-gray-400">Early DQ</div>
+                        </div>
+                        <div class="text-center p-4 bg-black/20 rounded-lg">
+                            <div class="text-lg font-bold text-orange-400">60-90 Days</div>
+                            <div class="text-xs text-gray-400">Moderate</div>
+                        </div>
+                        <div class="text-center p-4 bg-black/20 rounded-lg">
+                            <div class="text-lg font-bold text-red-400">90-120 Days</div>
+                            <div class="text-xs text-gray-400">Serious</div>
+                        </div>
+                        <div class="text-center p-4 bg-black/20 rounded-lg">
+                            <div class="text-lg font-bold text-rose-500">120+ Days</div>
+                            <div class="text-xs text-gray-400">Critical</div>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-gray-400 text-center">
+                        <strong>Before:</strong> Unknown portfolio status, delayed manual reporting &nbsp;|&nbsp; 
+                        <strong style="color: var(--accent-emerald);">Now:</strong> Real-time visibility, automated risk alerting
+                    </p>
+                </div>
+
+                <!-- Win 6 -->
+                <div class="win-card">
+                    <span class="win-number">#6</span>
+                    <h3 class="text-2xl font-bold mt-4 mb-4" style="color: var(--accent-rose);">The Old Approach Had No Path Forward—This Scales</h3>
+                    <p class="text-gray-300 text-lg mb-4">
+                        The legacy method broke at scale. Our architecture <strong>gets faster</strong> as the portfolio grows.
+                    </p>
+                    <div class="grid grid-cols-2 gap-6 mt-6">
+                        <div class="before-cell">
+                            <strong>❌ OLD APPROACH:</strong><br>
+                            • Every new month = manual reconstruction<br>
+                            • Couldn't scale past ~100 loans<br>
+                            • No formula automation<br>
+                            • Engineering bottleneck
+                        </div>
+                        <div class="after-cell">
+                            <strong>✅ NEW ARCHITECTURE:</strong><br>
+                            • Adding a month: &lt;5 minutes<br>
+                            • 73,109 formulas auto-recalculate<br>
+                            • Scales to 10,000+ loans<br>
+                            • Zero engineering dependency
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Win 7 -->
+                <div class="win-card">
+                    <span class="win-number">#7</span>
+                    <h3 class="text-2xl font-bold mt-4 mb-4" style="color: var(--accent-blue);">Multi-Servicer Reconciliation: 5,532 Transactions Unified</h3>
+                    <p class="text-gray-300 text-lg mb-4">
+                        PorchPass manages loans across two servicer platforms. We built <strong>automatic cross-platform reconciliation</strong>.
+                    </p>
+                    <div class="grid grid-cols-2 gap-6 mt-6">
+                        <div class="text-center p-6 bg-blue-500/10 rounded-lg border border-blue-500/30">
+                            <div class="text-4xl font-bold text-blue-400 mb-2">2,765</div>
+                            <div class="text-gray-400">Rogue Transactions</div>
+                        </div>
+                        <div class="text-center p-6 bg-purple-500/10 rounded-lg border border-purple-500/30">
+                            <div class="text-4xl font-bold text-purple-400 mb-2">2,767</div>
+                            <div class="text-gray-400">PorchPass Transactions</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-center text-gray-400">
+                        Automatic data ingestion → Transaction matching → Anomaly detection → Master history
+                    </div>
+                </div>
+
+                <!-- Win 8 -->
+                <div class="win-card">
+                    <span class="win-number">#8</span>
+                    <h3 class="text-2xl font-bold mt-4 mb-4" style="color: var(--accent-purple);">First-Ever Comprehensive Portfolio Intelligence</h3>
+                    <p class="text-gray-300 text-lg mb-4">
+                        Leadership previously had <strong>no comprehensive view</strong> of these critical dimensions. Now they do.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 mt-6">
+                        <div class="after-cell">📊 Historical portfolio performance (trends, patterns, stress periods)</div>
+                        <div class="after-cell">📈 Delinquency progression (risk vs. recovery)</div>
+                        <div class="after-cell">💵 Cash flow timing (when P/I/F will arrive)</div>
+                        <div class="after-cell">🏦 Servicer performance (accuracy comparison)</div>
+                    </div>
+                </div>
+
+                <!-- Win 9 -->
+                <div class="win-card">
+                    <span class="win-number">#9</span>
+                    <h3 class="text-2xl font-bold mt-4 mb-4" style="color: var(--accent-cyan);">Architecture Blueprint for Future Tech Migration</h3>
+                    <p class="text-gray-300 text-lg mb-4">
+                        This Excel system is built as a <strong>working specification</strong> for your future database/data warehouse.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 mt-6">
+                        <div class="p-4 bg-cyan-500/10 rounded-lg border border-cyan-500/30">
+                            <strong class="text-cyan-400">✓ All business rules documented</strong>
+                            <p class="text-sm text-gray-400 mt-1">30/360 interest, weighted averages, delinquency logic</p>
+                        </div>
+                        <div class="p-4 bg-cyan-500/10 rounded-lg border border-cyan-500/30">
+                            <strong class="text-cyan-400">✓ SQL-equivalent formulas</strong>
+                            <p class="text-sm text-gray-400 mt-1">Direct translation to database queries</p>
+                        </div>
+                        <div class="p-4 bg-cyan-500/10 rounded-lg border border-cyan-500/30">
+                            <strong class="text-cyan-400">✓ Complete validation framework</strong>
+                            <p class="text-sm text-gray-400 mt-1">Becomes your data quality layer</p>
+                        </div>
+                        <div class="p-4 bg-cyan-500/10 rounded-lg border border-cyan-500/30">
+                            <strong class="text-cyan-400">✓ Excel → DB schema mapping</strong>
+                            <p class="text-sm text-gray-400 mt-1">Complete reference implementation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Win 10 -->
+                <div class="win-card" style="border: 2px solid var(--accent-gold);">
+                    <span class="win-number" style="background: linear-gradient(135deg, var(--accent-gold), var(--accent-amber));">#10</span>
+                    <h3 class="text-2xl font-bold mt-4 mb-4" style="color: var(--accent-gold);">$175K-$225K Work Delivered in &lt;72 Hours</h3>
+                    <p class="text-gray-300 text-lg mb-4">
+                        On an annual basis, this infrastructure generates <strong>$210K+ in engineering cost avoidance</strong> while providing capabilities that didn't exist before.
+                    </p>
+                    <div class="grid grid-cols-3 gap-6 mt-6">
+                        <div class="text-center p-6 bg-gold-500/10 rounded-lg border border-yellow-500/30">
+                            <div class="text-3xl font-bold text-yellow-400 mb-2">$17.5K</div>
+                            <div class="text-gray-400">Value per monthly cycle</div>
+                        </div>
+                        <div class="text-center p-6 bg-gold-500/10 rounded-lg border border-yellow-500/30">
+                            <div class="text-3xl font-bold text-yellow-400 mb-2">$210K+</div>
+                            <div class="text-gray-400">Annual cost avoidance</div>
+                        </div>
+                        <div class="text-center p-6 bg-gold-500/10 rounded-lg border border-yellow-500/30">
+                            <div class="text-3xl font-bold text-yellow-400 mb-2">∞</div>
+                            <div class="text-gray-400">Scalable to any size</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Architecture -->
+        <section id="section-architecture" class="content-section">
+            <h2 class="text-4xl font-bold mb-8">🏗️ System Architecture</h2>
+            
+            <div class="glass-card mb-8">
+                <h3 class="text-2xl font-bold mb-6">End-to-End Data Flow</h3>
+                <div class="grid grid-cols-5 gap-4 text-center">
+                    <div class="p-4 bg-blue-500/10 rounded-lg border border-blue-500/30">
+                        <div class="text-3xl mb-2">📥</div>
+                        <div class="font-bold text-blue-400">Data Ingestion</div>
+                        <div class="text-xs text-gray-400 mt-1">Rogue + PorchPass</div>
+                    </div>
+                    <div class="flex items-center justify-center text-2xl text-gray-500">→</div>
+                    <div class="p-4 bg-purple-500/10 rounded-lg border border-purple-500/30">
+                        <div class="text-3xl mb-2">🔄</div>
+                        <div class="font-bold text-purple-400">Processing Engine</div>
+                        <div class="text-xs text-gray-400 mt-1">877K Formulas</div>
+                    </div>
+                    <div class="flex items-center justify-center text-2xl text-gray-500">→</div>
+                    <div class="p-4 bg-emerald-500/10 rounded-lg border border-emerald-500/30">
+                        <div class="text-3xl mb-2">📊</div>
+                        <div class="font-bold text-emerald-400">Output Layer</div>
+                        <div class="text-xs text-gray-400 mt-1">Dashboards + Reports</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card mb-8">
+                <h3 class="text-2xl font-bold mb-6">Core Components</h3>
+                <div class="grid grid-cols-3 gap-6">
+                    <div class="p-6 bg-black/20 rounded-lg">
+                        <h4 class="font-bold text-lg mb-4 text-blue-400">📑 Data Layer</h4>
+                        <ul class="space-y-2 text-gray-300 text-sm">
+                            <li>• Loan Sale Data (64 columns)</li>
+                            <li>• Trial Balance (68 columns)</li>
+                            <li>• 17 New Fields (33 columns)</li>
+                            <li>• Transaction History (5,532 rows)</li>
+                        </ul>
+                    </div>
+                    <div class="p-6 bg-black/20 rounded-lg">
+                        <h4 class="font-bold text-lg mb-4 text-purple-400">⚙️ Processing Layer</h4>
+                        <ul class="space-y-2 text-gray-300 text-sm">
+                            <li>• Config (parameter control)</li>
+                            <li>• MAIC Analytics (compliance)</li>
+                            <li>• QA Dashboard (validations)</li>
+                            <li>• Calendar Analysis (cash flow)</li>
+                        </ul>
+                    </div>
+                    <div class="p-6 bg-black/20 rounded-lg">
+                        <h4 class="font-bold text-lg mb-4 text-emerald-400">📈 Presentation Layer</h4>
+                        <ul class="space-y-2 text-gray-300 text-sm">
+                            <li>• Visual Dashboard</li>
+                            <li>• Historical Metrics</li>
+                            <li>• Servicing Dashboard</li>
+                            <li>• Loan Detail Viewer</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <h3 class="text-2xl font-bold mb-6">Key Technical Features</h3>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="p-4 border-l-4 border-blue-500 bg-blue-500/5">
+                        <h4 class="font-bold mb-2">Single-Input Automation</h4>
+                        <p class="text-gray-400 text-sm">Update Report Month/Year in Config → All 73,109 formulas recalculate → All dashboards update</p>
+                    </div>
+                    <div class="p-4 border-l-4 border-purple-500 bg-purple-500/5">
+                        <h4 class="font-bold mb-2">Cross-Platform Reconciliation</h4>
+                        <p class="text-gray-400 text-sm">Automatic matching between Rogue and PorchPass servicer data with anomaly detection</p>
+                    </div>
+                    <div class="p-4 border-l-4 border-cyan-500 bg-cyan-500/5">
+                        <h4 class="font-bold mb-2">30/360 Interest Calculations</h4>
+                        <p class="text-gray-400 text-sm">Industry-standard interest accrual methodology with complete audit trail</p>
+                    </div>
+                    <div class="p-4 border-l-4 border-emerald-500 bg-emerald-500/5">
+                        <h4 class="font-bold mb-2">Dynamic Loan Lookup</h4>
+                        <p class="text-gray-400 text-sm">&lt;1 second lookup for any of 399 loans with complete 12-month transaction history</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: 14 Engine Components -->
+        <section id="section-sheets" class="content-section">
+            <h2 class="text-4xl font-bold mb-8">📑 14 Engine Components</h2>
+            <p class="text-xl text-gray-400 mb-8">Complete breakdown of every sheet in the Data Room & Analytics workbook</p>
+            
+            <div class="grid grid-cols-2 gap-6">
+                <div class="sheet-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">⚙️</span>
+                        <h4 class="font-bold text-lg">Config</h4>
+                        <span class="badge info">Control Center</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">166 rows × 32 cols — Master parameter controls. Single-input automation source.</p>
+                </div>
+                
+                <div class="sheet-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">📊</span>
+                        <h4 class="font-bold text-lg">Visual Dashboard</h4>
+                        <span class="badge success">Executive View</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">39 rows × 16 cols — Auto-generated visualizations for C-Suite/Board presentations.</p>
+                </div>
+
+                <div class="sheet-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">📈</span>
+                        <h4 class="font-bold text-lg">Historical Metrics</h4>
+                        <span class="badge info">Trends</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">132 rows × 23 cols — 12-month trend analysis with month-over-month comparisons.</p>
+                </div>
+
+                <div class="sheet-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">🏦</span>
+                        <h4 class="font-bold text-lg">Servicing Dashboard</h4>
+                        <span class="badge warning">Operations</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">833 rows × 30 cols — P2 Monthly Servicing status, collections, and performance.</p>
+                </div>
+
+                <div class="sheet-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">📋</span>
+                        <h4 class="font-bold text-lg">MAIC Analytics</h4>
+                        <span class="badge success">Compliance</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">709 rows × 34 cols — Complete regulatory mapping. 383K auto-calculated cells across 12 months.</p>
+                </div>
+
+                <div class="sheet-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">✅</span>
+                        <h4 class="font-bold text-lg">QA Dashboard</h4>
+                        <span class="badge critical">Validation</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">930 rows × 34 cols — 533K validation rules. Catches anomalies before they become problems.</p>
+                </div>
+
+                <div class="sheet-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">💰</span>
+                        <h4 class="font-bold text-lg">Loan Sale Data</h4>
+                        <span class="badge info">Core Data</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">432 rows × 74 cols — Master loan data: 64 fields per loan including all origination data.</p>
+                </div>
+
+                <div class="sheet-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">⚖️</span>
+                        <h4 class="font-bold text-lg">Trial Balance</h4>
+                        <span class="badge warning">Accounting</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">400 rows × 68 cols — Current month balance reconciliation with 30/360 interest calculations.</p>
+                </div>
+
+                <div class="sheet-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">🔵</span>
+                        <h4 class="font-bold text-lg">Rogue</h4>
+                        <span class="badge info">Servicer</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">3,274 rows × 17 cols — Complete Rogue servicer transaction history (2,765 transactions).</p>
+                </div>
+
+                <div class="sheet-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">🟣</span>
+                        <h4 class="font-bold text-lg">PorchPass</h4>
+                        <span class="badge info">Servicer</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">2,768 rows × 17 cols — Complete PorchPass servicer transaction history (2,767 transactions).</p>
+                </div>
+
+                <div class="sheet-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">🔍</span>
+                        <h4 class="font-bold text-lg">Loan Detail Viewer</h4>
+                        <span class="badge success">Lookup</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">125 rows × 15 cols — Dynamic loan lookup. &lt;1 second access to any loan's complete history.</p>
+                </div>
+
+                <div class="sheet-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">🆕</span>
+                        <h4 class="font-bold text-lg">17 New Fields</h4>
+                        <span class="badge warning">Extended Data</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">399 rows × 41 cols — Additional loan fields: valuation, investor data, servicing fees.</p>
+                </div>
+
+                <div class="sheet-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">🏠</span>
+                        <h4 class="font-bold text-lg">P2 Originated Loans</h4>
+                        <span class="badge info">Portfolio</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">399 rows × 76 cols — P2 originated & serviced loans with complete origination data.</p>
+                </div>
+
+                <div class="sheet-card">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">📅</span>
+                        <h4 class="font-bold text-lg">Calendar Analysis</h4>
+                        <span class="badge success">Cash Flow</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">36 rows × 21 cols — Principal cash flow projections by calendar month.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Before vs After -->
+        <section id="section-comparison" class="content-section">
+            <h2 class="text-4xl font-bold mb-8">⚡ Before vs. After</h2>
+            
+            <div class="glass-card mb-8">
+                <div class="grid grid-cols-3 gap-4 mb-4 font-bold text-center">
+                    <div class="text-gray-400">Dimension</div>
+                    <div class="text-rose-400">❌ BEFORE</div>
+                    <div class="text-emerald-400">✅ AFTER</div>
+                </div>
+                
+                <div class="comparison-row">
+                    <div class="font-semibold">Build Time</div>
+                    <div class="before-cell">Months of engineering (failed)</div>
+                    <div class="after-cell">&lt;72 hours (complete success)</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="font-semibold">Monthly Execution</div>
+                    <div class="before-cell">Days of manual work</div>
+                    <div class="after-cell">&lt;5 minutes (automated)</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="font-semibold">Data Points</div>
+                    <div class="before-cell">Manual, incomplete, inconsistent</div>
+                    <div class="after-cell">2.33M validated data points</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="font-semibold">Formula Automation</div>
+                    <div class="before-cell">Zero (all manual)</div>
+                    <div class="after-cell">877,308 automated formulas</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="font-semibold">Audit Trail</div>
+                    <div class="before-cell">None (spreadsheet chaos)</div>
+                    <div class="after-cell">Complete, documented, traceable</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="font-semibold">Servicer Reconciliation</div>
+                    <div class="before-cell">Manual, missed anomalies</div>
+                    <div class="after-cell">Automatic, 5,532 transactions unified</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="font-semibold">MAIC Compliance</div>
+                    <div class="before-cell">Risky, error-prone manual</div>
+                    <div class="after-cell">383K auto-calculated cells</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="font-semibold">Portfolio Visibility</div>
+                    <div class="before-cell">Unknown, delayed, reactive</div>
+                    <div class="after-cell">Real-time, comprehensive, strategic</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="font-semibold">Scalability</div>
+                    <div class="before-cell">Broke at ~100 loans</div>
+                    <div class="after-cell">Scales to 10,000+ loans</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="font-semibold">Engineering Dependency</div>
+                    <div class="before-cell">100% (bottleneck)</div>
+                    <div class="after-cell">0% (self-service)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Value Generated -->
+        <section id="section-value" class="content-section">
+            <h2 class="text-4xl font-bold mb-8">💰 Value Generated</h2>
+            
+            <div class="grid grid-cols-3 gap-6 mb-8">
+                <div class="metric-card gold" style="border-top-width: 4px;">
+                    <div class="text-gray-400 mb-2">Annual Cost Avoidance</div>
+                    <div class="metric-value gold">$210K+</div>
+                    <div class="text-xs text-gray-500 mt-2">Engineering labor savings</div>
+                </div>
+                <div class="metric-card emerald" style="border-top-width: 4px;">
+                    <div class="text-gray-400 mb-2">Per-Cycle Value</div>
+                    <div class="metric-value emerald">$17.5K</div>
+                    <div class="text-xs text-gray-500 mt-2">Monthly execution value</div>
+                </div>
+                <div class="metric-card blue" style="border-top-width: 4px;">
+                    <div class="text-gray-400 mb-2">Delivery Value</div>
+                    <div class="metric-value blue">$175-225K</div>
+                    <div class="text-xs text-gray-500 mt-2">Initial build equivalent</div>
+                </div>
+            </div>
+
+            <div class="glass-card mb-8">
+                <h3 class="text-2xl font-bold mb-6">Cost Comparison Analysis</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Scenario</th>
+                            <th>Engineering Approach</th>
+                            <th>Our Approach</th>
+                            <th>Savings</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Initial Build</td>
+                            <td class="text-rose-400">Months of work (failed)</td>
+                            <td class="text-emerald-400">&lt;72 hours (success)</td>
+                            <td><span class="stat-highlight">$175K+</span></td>
+                        </tr>
+                        <tr>
+                            <td>Monthly Execution</td>
+                            <td class="text-rose-400">2 engineers × 3 days = ~$7K</td>
+                            <td class="text-emerald-400">&lt;5 minutes</td>
+                            <td><span class="stat-highlight">$7K/month</span></td>
+                        </tr>
+                        <tr>
+                            <td>Annual Operations</td>
+                            <td class="text-rose-400">~$84K+ (if even possible)</td>
+                            <td class="text-emerald-400">~$0 marginal cost</td>
+                            <td><span class="stat-highlight">$84K/year</span></td>
+                        </tr>
+                        <tr>
+                            <td>Error/Rework Cost</td>
+                            <td class="text-rose-400">Unknown (high risk)</td>
+                            <td class="text-emerald-400">Zero (validated)</td>
+                            <td><span class="stat-highlight">Incalculable</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="impact-block">
+                <h3 class="text-xl font-bold mb-4" style="color: var(--accent-emerald);">Strategic Value Beyond Cost Savings</h3>
+                <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div class="text-gray-300">✓ First-time portfolio intelligence enabling strategic decision-making</div>
+                    <div class="text-gray-300">✓ Automated compliance reduces regulatory risk and rejection rates</div>
+                    <div class="text-gray-300">✓ Real-time risk visibility enables proactive management</div>
+                    <div class="text-gray-300">✓ Blueprint accelerates future tech migration timeline</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Risk & Compliance -->
+        <section id="section-risk" class="content-section">
+            <h2 class="text-4xl font-bold mb-8">🛡️ Risk & Compliance</h2>
+            
+            <div class="glass-card mb-8">
+                <h3 class="text-2xl font-bold mb-6">Defense-in-Depth Validation</h3>
+                <div class="grid grid-cols-4 gap-6">
+                    <div class="text-center p-6 bg-blue-500/10 rounded-lg border border-blue-500/30">
+                        <div class="text-4xl font-bold text-blue-400 mb-2">533K</div>
+                        <div class="text-sm text-gray-400">Validation Rules</div>
+                        <div class="text-xs text-gray-500 mt-1">Anomaly detection</div>
+                    </div>
+                    <div class="text-center p-6 bg-purple-500/10 rounded-lg border border-purple-500/30">
+                        <div class="text-4xl font-bold text-purple-400 mb-2">188K</div>
+                        <div class="text-sm text-gray-400">Matching Functions</div>
+                        <div class="text-xs text-gray-500 mt-1">Cross-platform reconciliation</div>
+                    </div>
+                    <div class="text-center p-6 bg-emerald-500/10 rounded-lg border border-emerald-500/30">
+                        <div class="text-4xl font-bold text-emerald-400 mb-2">100%</div>
+                        <div class="text-sm text-gray-400">Audit Coverage</div>
+                        <div class="text-xs text-gray-500 mt-1">Every calculation traceable</div>
+                    </div>
+                    <div class="text-center p-6 bg-amber-500/10 rounded-lg border border-amber-500/30">
+                        <div class="text-4xl font-bold text-amber-400 mb-2">Zero</div>
+                        <div class="text-sm text-gray-400">Manual Risk</div>
+                        <div class="text-xs text-gray-500 mt-1">Fully automated</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6 mb-8">
+                <div class="glass-card">
+                    <h4 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="text-emerald-400">✓</span> If Asked About Risk
+                    </h4>
+                    <ul class="space-y-3 text-gray-300">
+                        <li>✓ Every calculation is automated and auditable</li>
+                        <li>✓ Dual-platform reconciliation validates data accuracy</li>
+                        <li>✓ 530K+ automated QA/QC formulas flag anomalies before reporting</li>
+                        <li>✓ Complete 12-month history enables stress testing and scenario analysis</li>
+                    </ul>
+                </div>
+                <div class="glass-card">
+                    <h4 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="text-emerald-400">✓</span> MAIC Compliance Automation
+                    </h4>
+                    <ul class="space-y-3 text-gray-300">
+                        <li>✓ Maps every loan record to regulatory requirements</li>
+                        <li>✓ Flags compliance exceptions before submission</li>
+                        <li>✓ Prevents rejections through pre-validation</li>
+                        <li>✓ Generates audit-ready documentation automatically</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Scalability -->
+        <section id="section-scalability" class="content-section">
+            <h2 class="text-4xl font-bold mb-8">🚀 Scalability</h2>
+            
+            <div class="glass-card mb-8">
+                <h3 class="text-2xl font-bold mb-6">Growth Trajectory Support</h3>
+                <div class="grid grid-cols-4 gap-6 text-center">
+                    <div class="p-6 bg-black/20 rounded-lg">
+                        <div class="text-3xl font-bold text-blue-400 mb-2">399</div>
+                        <div class="text-sm text-gray-400">Current Loans</div>
+                        <div class="progress-container mt-3">
+                            <div class="progress-bar blue" style="width: 4%;"></div>
+                        </div>
+                    </div>
+                    <div class="p-6 bg-black/20 rounded-lg">
+                        <div class="text-3xl font-bold text-purple-400 mb-2">1,000</div>
+                        <div class="text-sm text-gray-400">Near-Term</div>
+                        <div class="progress-container mt-3">
+                            <div class="progress-bar purple" style="width: 10%;"></div>
+                        </div>
+                    </div>
+                    <div class="p-6 bg-black/20 rounded-lg">
+                        <div class="text-3xl font-bold text-cyan-400 mb-2">5,000</div>
+                        <div class="text-sm text-gray-400">Mid-Term</div>
+                        <div class="progress-container mt-3">
+                            <div class="progress-bar blue" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                    <div class="p-6 bg-black/20 rounded-lg">
+                        <div class="text-3xl font-bold text-emerald-400 mb-2">10,000+</div>
+                        <div class="text-sm text-gray-400">Supported</div>
+                        <div class="progress-container mt-3">
+                            <div class="progress-bar emerald" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6 mb-8">
+                <div class="glass-card">
+                    <h4 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="text-emerald-400">✓</span> If Asked About Scalability
+                    </h4>
+                    <ul class="space-y-3 text-gray-300">
+                        <li>✓ &lt;5 minute monthly execution supports unlimited portfolio growth</li>
+                        <li>✓ Architecture scales from 400 to 10,000+ loans without process changes</li>
+                        <li>✓ Designed as blueprint for future database/warehouse migration</li>
+                        <li>✓ Eliminates engineering bottleneck for business growth</li>
+                    </ul>
+                </div>
+                <div class="glass-card">
+                    <h4 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <span class="text-blue-400">🏗️</span> Architecture Advantage
+                    </h4>
+                    <ul class="space-y-3 text-gray-300">
+                        <li>• Single-parameter automation (change date → everything updates)</li>
+                        <li>• 73,109 formulas recalculate automatically per month</li>
+                        <li>• All dashboards, validations, reports update in real-time</li>
+                        <li>• Legacy approach broke at scale; this approach accelerates</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="quote-block">
+                The legacy approach broke at scale. This approach <strong>gets faster</strong> as the portfolio grows.
+                What used to be an engineering bottleneck is now a <strong>5-minute automated process</strong>.
+            </div>
+        </section>
+
+        <!-- Section: Q1 2026 Roadmap -->
+        <section id="section-roadmap" class="content-section">
+            <h2 class="text-4xl font-bold mb-8">🗺️ Q1 2026 Strategic Roadmap</h2>
+            
+            <div class="glass-card mb-8">
+                <h3 class="text-2xl font-bold mb-6">P2 Enterprise Data Platform Build</h3>
+                <p class="text-xl text-gray-300 mb-8">
+                    This Excel system serves as the <strong>working specification</strong> for our enterprise data platform.
+                    All business rules, calculations, and validations are documented and ready for migration.
+                </p>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h4 class="font-bold text-lg mb-2">Phase 1: Foundation (Q1 2026)</h4>
+                    <p class="text-gray-400">Database schema design from Excel mapping. Core data ingestion pipelines. Basic reporting layer.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot" style="background: var(--accent-purple);"></div>
+                    <h4 class="font-bold text-lg mb-2">Phase 2: Analytics Engine (Q2 2026)</h4>
+                    <p class="text-gray-400">Migrate 877K formulas to SQL/stored procedures. Real-time dashboard implementation. API layer.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot" style="background: var(--accent-emerald);"></div>
+                    <h4 class="font-bold text-lg mb-2">Phase 3: PorchShield Integration (Q3-Q4 2026)</h4>
+                    <p class="text-gray-400">Asset management subsidiary data integration. Investor portal. Advanced analytics and ML.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6 mb-8">
+                <div class="glass-card">
+                    <h4 class="text-xl font-bold mb-4" style="color: var(--accent-blue);">📊 What We Have Now</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li>• Complete Excel → Database schema mapping</li>
+                        <li>• All business rules documented</li>
+                        <li>• SQL-equivalent formulas ready</li>
+                        <li>• Validation framework defined</li>
+                        <li>• Working reference implementation</li>
+                    </ul>
+                </div>
+                <div class="glass-card">
+                    <h4 class="text-xl font-bold mb-4" style="color: var(--accent-emerald);">🚀 What This Enables</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li>• Eliminates ambiguity in requirements</li>
+                        <li>• Reduces engineering risk significantly</li>
+                        <li>• Accelerates development timeline</li>
+                        <li>• Provides testing baseline</li>
+                        <li>• Ensures business continuity</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="impact-block">
+                <h3 class="text-xl font-bold mb-4" style="color: var(--accent-emerald);">Why Q1 2026 is the Right Time</h3>
+                <p class="text-gray-300">
+                    We now have <strong>proven capability</strong>, <strong>documented requirements</strong>, and <strong>operational stability</strong>.
+                    The current Excel system provides business continuity while we build enterprise infrastructure.
+                    Delaying means extending technical debt; advancing now builds on momentum.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section: Board Recommendation -->
+        <section id="section-recommendation" class="content-section">
+            <h2 class="text-4xl font-bold mb-8">✅ Board Recommendation</h2>
+            
+            <div class="cta-section mb-8">
+                <h3 class="text-3xl font-bold mb-6" style="position: relative; z-index: 1;">
+                    Strong Approval & Resource Commitment
+                </h3>
+                <p class="text-xl text-gray-300 mb-8 max-w-3xl mx-auto" style="position: relative; z-index: 1;">
+                    We recommend the Board provide <strong>unwavering approval</strong> and <strong>resource commitment</strong> 
+                    to proceed with the P2 Enterprise Data Platform build-out in Q1 2026.
+                </p>
+                <div class="flex justify-center gap-4" style="position: relative; z-index: 1;">
+                    <span class="badge success" style="padding: 12px 24px; font-size: 1rem;">CONFIDENCE: EXTREMELY HIGH</span>
+                </div>
+            </div>
+
+            <div class="glass-card mb-8">
+                <h3 class="text-2xl font-bold mb-6">What the C-Suite Should Tell the Board</h3>
+                <div class="quote-block" style="font-size: 1.1rem;">
+                    "For the first time in PorchPass history, we have complete, auditable visibility into our loan portfolio spanning 12 months. 
+                    We understand our delinquency trends, cash flow patterns, servicer performance, and risk signals in real time.<br><br>
+                    The system that was supposed to take months and failed instead took <strong>72 hours</strong> and works flawlessly. 
+                    Monthly reporting now requires <strong>&lt;5 minutes</strong>.<br><br>
+                    We've built a foundation that scales with our business, eliminates calculation risk, and positions us to migrate to 
+                    enterprise infrastructure when the time is right.<br><br>
+                    <strong>This is the infrastructure backbone our business model depends on.</strong>"
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-6 mb-8">
+                <div class="glass-card text-center">
+                    <div class="text-4xl mb-4">📊</div>
+                    <h4 class="font-bold text-lg mb-2">Data Platform</h4>
+                    <p class="text-gray-400 text-sm">Enterprise-grade infrastructure ready for Q1 2026 build</p>
+                    <span class="badge success mt-4">READY</span>
+                </div>
+                <div class="glass-card text-center">
+                    <div class="text-4xl mb-4">🛡️</div>
+                    <h4 class="font-bold text-lg mb-2">PorchShield AM</h4>
+                    <p class="text-gray-400 text-sm">Asset management subsidiary data foundation established</p>
+                    <span class="badge info mt-4">ENABLED</span>
+                </div>
+                <div class="glass-card text-center">
+                    <div class="text-4xl mb-4">🚀</div>
+                    <h4 class="font-bold text-lg mb-2">Strategic Ops</h4>
+                    <p class="text-gray-400 text-sm">Demonstrated highest-performing team capability</p>
+                    <span class="badge success mt-4">PROVEN</span>
+                </div>
+            </div>
+
+            <div class="glass-card" style="border: 2px solid var(--accent-gold);">
+                <h3 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                    <span style="color: var(--accent-gold);">⭐</span>
+                    Key Takeaways for the Board
+                </h3>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <span class="text-emerald-400 text-xl">✓</span>
+                            <div>
+                                <strong class="text-white">Engineering Vindication</strong>
+                                <p class="text-gray-400 text-sm">Architectural thinking succeeded where ad-hoc engineering failed</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="text-emerald-400 text-xl">✓</span>
+                            <div>
+                                <strong class="text-white">Value Delivered</strong>
+                                <p class="text-gray-400 text-sm">$210K+ annual cost avoidance with capabilities that didn't exist before</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="text-emerald-400 text-xl">✓</span>
+                            <div>
+                                <strong class="text-white">Risk Mitigation</strong>
+                                <p class="text-gray-400 text-sm">530K+ validation formulas eliminate manual calculation errors</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <span class="text-emerald-400 text-xl">✓</span>
+                            <div>
+                                <strong class="text-white">Scalable Foundation</strong>
+                                <p class="text-gray-400 text-sm">Supports growth from 400 to 10,000+ loans without process changes</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="text-emerald-400 text-xl">✓</span>
+                            <div>
+                                <strong class="text-white">Migration Ready</strong>
+                                <p class="text-gray-400 text-sm">Complete blueprint for enterprise database/data warehouse</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="text-emerald-400 text-xl">✓</span>
+                            <div>
+                                <strong class="text-white">Strategic Capability</strong>
+                                <p class="text-gray-400 text-sm">Data, analytics, and reporting is now a core competitive advantage</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Navigation functionality
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById('section-' + sectionId).classList.add('active');
+            
+            // Add active to clicked nav item
+            event.currentTarget.classList.add('active');
+            
+            // Reinitialize charts if on metrics section
+            if (sectionId === 'metrics') {
+                setTimeout(initCharts, 100);
+            }
+        }
+
+        // Initialize charts
+        function initCharts() {
+            const ctx = document.getElementById('formulaChart');
+            if (!ctx) return;
+            
+            // Destroy existing chart if any
+            if (window.formulaChartInstance) {
+                window.formulaChartInstance.destroy();
+            }
+            
+            window.formulaChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Validation & Classification', 'Cross-Platform Matching', 'Bucketing & Aggregation', 'Financial Calculations'],
+                    datasets: [{
+                        data: [533494, 188541, 129056, 26217],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(139, 92, 246, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(6, 182, 212, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(139, 92, 246, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(6, 182, 212, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#94a3b8',
+                                font: {
+                                    size: 11
+                                },
+                                padding: 15
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Animate numbers on scroll
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.textContent = value.toLocaleString();
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up initial state
+            initCharts();
+            
+            // Add smooth scrolling
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+        });
+
+        // Print/Export functionality
+        function exportPresentation() {
+            window.print();
+        }
+    </script>
+</body>
+</html>
